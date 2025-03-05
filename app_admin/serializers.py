@@ -31,5 +31,5 @@ class AdminCreateSerializer(serializers.ModelSerializer):
             admin_group = Group.objects.get(name='admins')
             user.groups.add(admin_group)
             return user
-        except:
-            raise serializers.ValidationError("Something went wrong :(")
+        except Exception as e:
+            raise serializers.ValidationError(f"Something went wrong :({e}")
