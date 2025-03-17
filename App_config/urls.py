@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.models import Permission
 from django.urls import path, include
@@ -21,6 +22,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from App_config import settings
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -44,7 +47,15 @@ urlpatterns = [
 
 urlpatterns += [
     path('admin/', admin.site.urls),
-    path('admin-custom/', include('app_admin.urls', namespace='admin')),
-    path('api/v1/users/', include('app_users.urls', namespace='users')),
+    path('api/v1/admins/', include('app_admins.urls', namespace='admin')),
+    path('api/v1/students/', include('app_students.urls', namespace='students')),
+    path('api/v1/teachers/', include('app_teachers.urls', namespace='teachers')),
+    path('api/v1/groups/', include('app_groups.urls', namespace='groups')),
+    path('api/v1/lessons/', include('app_lessons.urls', namespace='lessons')),
+    path('api/v1/authentication/', include('app_authentication.urls', namespace='authentication')),
     path('api/v1/homeworks/', include('app_homeworks.urls', namespace='homeworks'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

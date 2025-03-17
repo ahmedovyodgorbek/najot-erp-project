@@ -9,7 +9,13 @@ UserModel = get_user_model()
 
 class LessonModel(BaseModel):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, null=True)
+    video = models.FileField(upload_to='lessons/', null=True)
     group = models.ForeignKey(GroupModel, on_delete=models.CASCADE, related_name='lessons')
+    ended_at = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return f"{self.title}  in group {self.group.title}"
 
     class Meta:
         verbose_name = 'lesson'
