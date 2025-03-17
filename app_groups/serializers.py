@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 from app_groups.models import GroupModel, SubjectModel
-from app_lessons.serializers import LessonSerializer
+from app_lessons.serializers import MyLessonsSerializer
 
 UserModel = get_user_model()
 
@@ -31,7 +31,7 @@ class GroupMembersSerializer(serializers.ModelSerializer):
 class GroupDetailSerializer(serializers.ModelSerializer):
     members = GroupMembersSerializer(many=True, read_only=True)
     subject_title = serializers.CharField(source='subject.title', read_only=True)
-    lessons = LessonSerializer(many=True, read_only=True)
+    lessons = MyLessonsSerializer(many=True, read_only=True)
 
     class Meta:
         model = GroupModel

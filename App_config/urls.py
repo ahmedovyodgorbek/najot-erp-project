@@ -46,7 +46,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('api/v1/admins/', include('app_admins.urls', namespace='admin')),
     path('api/v1/students/', include('app_students.urls', namespace='students')),
     path('api/v1/teachers/', include('app_teachers.urls', namespace='teachers')),

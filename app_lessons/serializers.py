@@ -26,7 +26,6 @@ class LessonDetailSerializer(serializers.ModelSerializer):
         submission = HomeworkSubmissionModel.objects.filter(task=task).first()
 
 
-
 class MyLessonsSerializer(serializers.ModelSerializer):
     homework_status = serializers.SerializerMethodField()
     deadline = serializers.SerializerMethodField()
