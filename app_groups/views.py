@@ -46,6 +46,13 @@ class SubjectListCreateAPIView(ListCreateAPIView):
     pagination_class = StandardResultsSetPagination
 
 
+class SubjectRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = serializers.SubjectSerializer
+    queryset = SubjectModel.objects.all()
+    lookup_field = 'slug'
+
+
 class AddUserToGroupAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = serializers.AddUserToGroupSerializer

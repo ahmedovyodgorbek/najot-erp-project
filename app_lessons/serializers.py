@@ -1,9 +1,12 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import LessonModel
+from .models import LessonModel, AttendanceModel
 from app_groups.models import GroupModel
 from app_homeworks.models import HomeworkSubmissionModel, HomeworkTaskModel
 from app_homeworks.serializers import HomeworkTaskSerializer
+
+UserModel = get_user_model()
 
 
 class LessonDetailSerializer(serializers.ModelSerializer):
@@ -66,3 +69,45 @@ class LessonCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Group does not exist")
         attrs['group'] = group
         return attrs
+
+
+class ManageAttendanceSerializer(serializers.Serializer):
+    student_username = serializers.CharField()
+    lesson_slug = serializers.CharField()
+
+    def validate(self, attrs):
+        student_username = attrs.get('student_username')
+        lesson_slug = attrs.get('lesson_slug')
+
+        try:
+            student = UserModel.objects.get(username=student_username)
+            lesson = LessonModel.objects.get(slug=lesson_slug)
+        except UserModel.DoesNotExist:
+            raise serializers.ValidationError("User was not found")
+        except LessonModel.DoesNotExist:
+            raise serializers.ValidationError("Lesson was not found")
+        attrs['student'] = student
+        attrs['lesson'] = lesson
+        return attrs
+
+    def create(self, validated_data):
+        student = validated_data.pop('student')
+        lesson = validated_data.pop('lesson')
+
+        attendance, created = AttendanceModel.objects.get_or_create(
+            student=student, lesson=lesson,
+            defaults={'status': 'present'}
+        )
+        if not created:
+            attendance.status = 'present' if attendance.status == 'absent' else 'absent'
+            attendance.save()
+        return attendance
+
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    lesson = serializers.CharField(source='lesson.title', read_only=True)
+    student = serializers.CharField(source='student.username', read_only=True)
+
+    class Meta:
+        model = AttendanceModel
+        fields = ['lesson', 'student', 'status']
